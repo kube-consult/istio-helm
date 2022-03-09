@@ -1,0 +1,136 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+  generation: 1
+  labels:
+    install.operator.istio.io/owning-resource-namespace: istio-system
+    istio.io/rev: default
+    operator.istio.io/component: Base
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.9.0
+    release: istio
+  managedFields:
+  - apiVersion: apiextensions.k8s.io/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+        f:labels:
+          f:install.operator.istio.io/owning-resource-namespace: {}
+          f:istio.io/rev: {}
+          f:operator.istio.io/component: {}
+          f:operator.istio.io/managed: {}
+          f:operator.istio.io/version: {}
+          f:release: {}
+      f:spec:
+        f:additionalPrinterColumns: {}
+        f:group: {}
+        f:names:
+          f:kind: {}
+          f:plural: {}
+          f:shortNames: {}
+          f:singular: {}
+        f:scope: {}
+        f:validation:
+          f:openAPIV3Schema:
+            f:properties:
+              f:apiVersion:
+                .: {}
+                f:description: {}
+                f:type: {}
+              f:kind:
+                .: {}
+                f:description: {}
+                f:type: {}
+              f:spec:
+                .: {}
+                f:description: {}
+                f:type: {}
+              f:status:
+                .: {}
+                f:description: {}
+                f:type: {}
+        f:versions: {}
+    manager: istio-operator
+    operation: Apply
+    time: "2021-02-18T22:33:44Z"
+  - apiVersion: apiextensions.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:acceptedNames:
+          f:kind: {}
+          f:listKind: {}
+          f:plural: {}
+          f:shortNames: {}
+          f:singular: {}
+        f:conditions: {}
+    manager: kube-apiserver
+    operation: Update
+    time: "2021-02-18T22:33:44Z"
+  name: istiooperators.install.istio.io
+  selfLink: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/istiooperators.install.istio.io
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .spec.revision
+    description: Istio control plane revision
+    name: Revision
+    type: string
+  - JSONPath: .status.status
+    description: IOP current state
+    name: Status
+    type: string
+  - JSONPath: .metadata.creationTimestamp
+    description: 'CreationTimestamp is a timestamp representing the server time when
+      this object was created. It is not guaranteed to be set in happens-before order
+      across separate operations. Clients may not set this value. It is represented
+      in RFC3339 form and is in UTC. Populated by the system. Read-only. Null for
+      lists. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata'
+    name: Age
+    type: date
+  conversion:
+    strategy: None
+  group: install.istio.io
+  names:
+    kind: IstioOperator
+    listKind: IstioOperatorList
+    plural: istiooperators
+    shortNames:
+    - iop
+    - io
+    singular: istiooperator
+  preserveUnknownFields: true
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        spec:
+          description: 'Specification of the desired state of the istio control plane
+            resource. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status'
+          type: object
+        status:
+          description: 'Status describes each of istio control plane component status
+            at the current time. 0 means NONE, 1 means UPDATING, 2 means HEALTHY,
+            3 means ERROR, 4 means RECONCILING. More info: https://github.com/istio/api/blob/master/operator/v1alpha1/istio.operator.v1alpha1.pb.html
+            & https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status'
+          type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:

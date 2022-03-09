@@ -1,0 +1,266 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  generation: 1
+  labels:
+    app: istio-pilot
+    chart: istio
+    heritage: Tiller
+    install.operator.istio.io/owning-resource-namespace: istio-system
+    istio.io/rev: default
+    operator.istio.io/component: Base
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.9.0
+    release: istio
+  managedFields:
+  - apiVersion: apiextensions.k8s.io/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:helm.sh/resource-policy: {}
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+        f:labels:
+          f:app: {}
+          f:chart: {}
+          f:heritage: {}
+          f:install.operator.istio.io/owning-resource-namespace: {}
+          f:istio.io/rev: {}
+          f:operator.istio.io/component: {}
+          f:operator.istio.io/managed: {}
+          f:operator.istio.io/version: {}
+          f:release: {}
+      f:spec:
+        f:group: {}
+        f:names:
+          f:categories: {}
+          f:kind: {}
+          f:listKind: {}
+          f:plural: {}
+          f:singular: {}
+        f:preserveUnknownFields: {}
+        f:scope: {}
+        f:validation:
+          f:openAPIV3Schema:
+            f:properties:
+              f:spec:
+                .: {}
+                f:description: {}
+                f:properties:
+                  f:egress:
+                    .: {}
+                    f:items: {}
+                    f:type: {}
+                  f:ingress:
+                    .: {}
+                    f:items: {}
+                    f:type: {}
+                  f:outboundTrafficPolicy:
+                    .: {}
+                    f:description: {}
+                    f:properties:
+                      f:egressProxy:
+                        .: {}
+                        f:properties:
+                          f:host:
+                            .: {}
+                            f:description: {}
+                            f:format: {}
+                            f:type: {}
+                          f:port:
+                            .: {}
+                            f:description: {}
+                            f:properties:
+                              f:number:
+                                .: {}
+                                f:type: {}
+                            f:type: {}
+                          f:subset:
+                            .: {}
+                            f:description: {}
+                            f:format: {}
+                            f:type: {}
+                        f:type: {}
+                      f:mode:
+                        .: {}
+                        f:enum: {}
+                        f:type: {}
+                    f:type: {}
+                  f:workloadSelector:
+                    .: {}
+                    f:properties:
+                      f:labels:
+                        .: {}
+                        f:additionalProperties: {}
+                        f:type: {}
+                    f:type: {}
+                f:type: {}
+              f:status:
+                .: {}
+                f:type: {}
+                f:x-kubernetes-preserve-unknown-fields: {}
+            f:type: {}
+        f:versions: {}
+    manager: istio-operator
+    operation: Apply
+    time: "2021-02-18T22:33:44Z"
+  - apiVersion: apiextensions.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:acceptedNames:
+          f:categories: {}
+          f:kind: {}
+          f:listKind: {}
+          f:plural: {}
+          f:singular: {}
+        f:conditions: {}
+    manager: kube-apiserver
+    operation: Update
+    time: "2021-02-18T22:33:44Z"
+  name: sidecars.networking.istio.io
+  selfLink: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/sidecars.networking.istio.io
+spec:
+  conversion:
+    strategy: None
+  group: networking.istio.io
+  names:
+    categories:
+    - istio-io
+    - networking-istio-io
+    kind: Sidecar
+    listKind: SidecarList
+    plural: sidecars
+    singular: sidecar
+  preserveUnknownFields: false
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          description: 'Configuration affecting network reachability of a sidecar.
+            See more details at: https://istio.io/docs/reference/config/networking/sidecar.html'
+          properties:
+            egress:
+              items:
+                properties:
+                  bind:
+                    format: string
+                    type: string
+                  captureMode:
+                    enum:
+                    - DEFAULT
+                    - IPTABLES
+                    - NONE
+                    type: string
+                  hosts:
+                    items:
+                      format: string
+                      type: string
+                    type: array
+                  port:
+                    description: The port associated with the listener.
+                    properties:
+                      name:
+                        description: Label assigned to the port.
+                        format: string
+                        type: string
+                      number:
+                        description: A valid non-negative integer port number.
+                        type: integer
+                      protocol:
+                        description: The protocol exposed on the port.
+                        format: string
+                        type: string
+                      targetPort:
+                        type: integer
+                    type: object
+                type: object
+              type: array
+            ingress:
+              items:
+                properties:
+                  bind:
+                    description: The IP to which the listener should be bound.
+                    format: string
+                    type: string
+                  captureMode:
+                    enum:
+                    - DEFAULT
+                    - IPTABLES
+                    - NONE
+                    type: string
+                  defaultEndpoint:
+                    format: string
+                    type: string
+                  port:
+                    description: The port associated with the listener.
+                    properties:
+                      name:
+                        description: Label assigned to the port.
+                        format: string
+                        type: string
+                      number:
+                        description: A valid non-negative integer port number.
+                        type: integer
+                      protocol:
+                        description: The protocol exposed on the port.
+                        format: string
+                        type: string
+                      targetPort:
+                        type: integer
+                    type: object
+                type: object
+              type: array
+            outboundTrafficPolicy:
+              description: Configuration for the outbound traffic policy.
+              properties:
+                egressProxy:
+                  properties:
+                    host:
+                      description: The name of a service from the service registry.
+                      format: string
+                      type: string
+                    port:
+                      description: Specifies the port on the host that is being addressed.
+                      properties:
+                        number:
+                          type: integer
+                      type: object
+                    subset:
+                      description: The name of a subset within the service.
+                      format: string
+                      type: string
+                  type: object
+                mode:
+                  enum:
+                  - REGISTRY_ONLY
+                  - ALLOW_ANY
+                  type: string
+              type: object
+            workloadSelector:
+              properties:
+                labels:
+                  additionalProperties:
+                    format: string
+                    type: string
+                  type: object
+              type: object
+          type: object
+        status:
+          type: object
+          x-kubernetes-preserve-unknown-fields: true
+      type: object
+  version: v1alpha3
+  versions:
+  - name: v1alpha3
+    served: true
+    storage: true
+  - name: v1beta1
+    served: true
+    storage: false
+status:

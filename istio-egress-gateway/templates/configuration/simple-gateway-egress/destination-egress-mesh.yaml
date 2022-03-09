@@ -1,0 +1,25 @@
+{{- if .Values.settings.egress_simple_gateways_enabled }}
+  {{- range $k, $v := .Values.settings.egress_simple_gateways_values }}
+    {{- range $kk, $vv := $v }}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ $kk }}
+spec:
+  host: egressgateway-{{ $.Values.settings.namespace }}
+  subsets:
+  - name: {{ $kk }}
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+      portLevelSettings:
+      - port:
+          number: 443
+        tls:
+          mode: ISTIO_MUTUAL
+          sni: {{ (split "|" $vv)._0 }}
+---  
+    {{ end }}
+  {{ end }}
+{{- end }}
+

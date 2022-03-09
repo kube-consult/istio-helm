@@ -1,0 +1,19 @@
+{{- if .Values.settings.egress_wildcard_enabled }}
+  {{- range $k, $v := .Values.settings.egress_wildcard_values }}
+    {{- range $kk, $vv := $v }}
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: {{ $kk }}
+spec:
+  hosts:
+  - "*{{ (split "|" $vv)._0 }}"
+  ports:
+  - number: {{ (split "|" $vv)._1 }}
+    name: tls
+    protocol: TLS
+  resolution: DNS
+---  
+    {{ end }}
+  {{ end }}
+{{- end }}

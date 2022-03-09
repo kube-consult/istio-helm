@@ -1,0 +1,21 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+  generation: 1
+  labels:
+    app: istio-ingressgateway-{{ .Values.settings.namespace }}
+    istio: ingressgateway-{{ .Values.settings.namespace }}
+    gateway-name: ingressgateway-{{ .Values.settings.namespace }}
+    istio.io/rev: default
+    release: istio
+  name: ingressgateway-{{ .Values.settings.namespace }}
+  namespace: "{{ .Values.settings.namespace }}"
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: istio-ingressgateway-{{ .Values.settings.namespace }}
+      istio: ingressgateway-{{ .Values.settings.namespace }}
+status:
+

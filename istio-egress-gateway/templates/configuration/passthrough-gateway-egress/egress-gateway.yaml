@@ -1,0 +1,23 @@
+{{- if .Values.settings.egress_passthrough_gateway_enabled }}
+  {{- range $k, $v := .Values.settings.egress_passthrough_gateway_values }}
+    {{- range $kk, $vv := $v }}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ $kk }}
+spec:
+  selector:
+    istio: egressgateway-{{ $.Values.settings.namespace }}
+  servers:
+  - port:
+      number: 443
+      name: tls
+      protocol: TLS
+    hosts:
+    - {{ (split "|" $vv)._0 }}
+    tls:
+      mode: PASSTHROUGH
+---  
+    {{ end }}
+  {{ end }}
+{{- end }}

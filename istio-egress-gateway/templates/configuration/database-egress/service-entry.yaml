@@ -1,0 +1,21 @@
+{{- if .Values.settings.egress_database_enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: {{ .Values.settings.egress_database_name }}
+spec:
+  addresses:
+  {{- range .Values.settings.egress_database_ip_range }}
+  - {{ . }}
+  {{- end }}   
+  hosts:
+  - {{ .Values.settings.egress_database_hostname }}
+  location: MESH_EXTERNAL
+  ports:
+  {{- range .Values.settings.egress_database_ports }}
+  - name: tcp
+    number: {{ . }}
+    protocol: TCP
+  {{- end }}   
+  resolution: NONE
+{{- end }}

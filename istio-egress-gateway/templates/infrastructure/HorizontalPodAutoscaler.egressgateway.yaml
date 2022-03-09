@@ -1,0 +1,22 @@
+{{- if .Values.settings.egress_gateway_infrastructure_enabled }}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+  labels:
+    app: istio-egressgateway-{{ .Values.settings.namespace }}
+    istio: egressgateway-{{ .Values.settings.namespace }}
+    istio.io/rev: default
+    release: istio
+  name: egressgateway-{{ .Values.settings.namespace }}
+  namespace: {{ .Values.settings.namespace }}
+spec:
+  maxReplicas: 5
+  minReplicas: {{ .Values.settings.replicas }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: egressgateway-{{ .Values.settings.namespace }}
+  targetCPUUtilizationPercentage: 80
+status:
+{{- end }}

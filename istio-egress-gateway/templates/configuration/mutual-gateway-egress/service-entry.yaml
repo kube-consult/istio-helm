@@ -1,0 +1,22 @@
+{{- if .Values.settings.egress_mutual_gateways_enabled }}
+  {{- range $k, $v := .Values.settings.egress_mutual_gateways_values }}
+    {{- range $kk, $vv := $v }}
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: {{ $kk }}
+spec:
+  hosts:
+  - {{ (split "|" $vv)._0 }}
+  ports:
+  - name: http
+    number: 80
+    protocol: HTTP
+  - name: https
+    number: 443
+    protocol: TLS
+  resolution: DNS
+---  
+    {{ end }}
+  {{ end }}
+{{- end }}

@@ -1,0 +1,352 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  generation: 1
+  labels:
+    app: istio-pilot
+    chart: istio
+    heritage: Tiller
+    install.operator.istio.io/owning-resource-namespace: istio-system
+    istio: security
+    istio.io/rev: default
+    operator.istio.io/component: Base
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.9.0
+    release: istio
+  managedFields:
+  - apiVersion: apiextensions.k8s.io/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:helm.sh/resource-policy: {}
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+        f:labels:
+          f:app: {}
+          f:chart: {}
+          f:heritage: {}
+          f:install.operator.istio.io/owning-resource-namespace: {}
+          f:istio: {}
+          f:istio.io/rev: {}
+          f:operator.istio.io/component: {}
+          f:operator.istio.io/managed: {}
+          f:operator.istio.io/version: {}
+          f:release: {}
+      f:spec:
+        f:group: {}
+        f:names:
+          f:categories: {}
+          f:kind: {}
+          f:listKind: {}
+          f:plural: {}
+          f:singular: {}
+        f:preserveUnknownFields: {}
+        f:scope: {}
+        f:validation:
+          f:openAPIV3Schema:
+            f:properties:
+              f:spec:
+                .: {}
+                f:description: {}
+                f:oneOf: {}
+                f:properties:
+                  f:action:
+                    .: {}
+                    f:description: {}
+                    f:enum: {}
+                    f:type: {}
+                  f:provider:
+                    .: {}
+                    f:description: {}
+                    f:properties:
+                      f:name:
+                        .: {}
+                        f:description: {}
+                        f:format: {}
+                        f:type: {}
+                    f:type: {}
+                  f:rules:
+                    .: {}
+                    f:description: {}
+                    f:items: {}
+                    f:type: {}
+                  f:selector:
+                    .: {}
+                    f:description: {}
+                    f:properties:
+                      f:matchLabels:
+                        .: {}
+                        f:additionalProperties: {}
+                        f:type: {}
+                    f:type: {}
+                f:type: {}
+              f:status:
+                .: {}
+                f:type: {}
+                f:x-kubernetes-preserve-unknown-fields: {}
+            f:type: {}
+        f:versions: {}
+    manager: istio-operator
+    operation: Apply
+    time: "2021-02-18T22:33:43Z"
+  - apiVersion: apiextensions.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:acceptedNames:
+          f:categories: {}
+          f:kind: {}
+          f:listKind: {}
+          f:plural: {}
+          f:singular: {}
+        f:conditions: {}
+    manager: kube-apiserver
+    operation: Update
+    time: "2021-02-18T22:33:43Z"
+  name: authorizationpolicies.security.istio.io
+  selfLink: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/authorizationpolicies.security.istio.io
+spec:
+  conversion:
+    strategy: None
+  group: security.istio.io
+  names:
+    categories:
+    - istio-io
+    - security-istio-io
+    kind: AuthorizationPolicy
+    listKind: AuthorizationPolicyList
+    plural: authorizationpolicies
+    singular: authorizationpolicy
+  preserveUnknownFields: false
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          description: 'Configuration for access control on workloads. See more details
+            at: https://istio.io/docs/reference/config/security/authorization-policy.html'
+          oneOf:
+          - not:
+              anyOf:
+              - required:
+                - provider
+          - required:
+            - provider
+          properties:
+            action:
+              description: Optional.
+              enum:
+              - ALLOW
+              - DENY
+              - AUDIT
+              - CUSTOM
+              type: string
+            provider:
+              description: Specifies detailed configuration of the CUSTOM action.
+              properties:
+                name:
+                  description: Specifies the name of the extension provider.
+                  format: string
+                  type: string
+              type: object
+            rules:
+              description: Optional.
+              items:
+                properties:
+                  from:
+                    description: Optional.
+                    items:
+                      properties:
+                        source:
+                          description: Source specifies the source of a request.
+                          properties:
+                            ipBlocks:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            namespaces:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            notIpBlocks:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            notNamespaces:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            notPrincipals:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            notRemoteIpBlocks:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            notRequestPrincipals:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            principals:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            remoteIpBlocks:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            requestPrincipals:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                          type: object
+                      type: object
+                    type: array
+                  to:
+                    description: Optional.
+                    items:
+                      properties:
+                        operation:
+                          description: Operation specifies the operation of a request.
+                          properties:
+                            hosts:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            methods:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            notHosts:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            notMethods:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            notPaths:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            notPorts:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            paths:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                            ports:
+                              description: Optional.
+                              items:
+                                format: string
+                                type: string
+                              type: array
+                          type: object
+                      type: object
+                    type: array
+                  when:
+                    description: Optional.
+                    items:
+                      properties:
+                        key:
+                          description: The name of an Istio attribute.
+                          format: string
+                          type: string
+                        notValues:
+                          description: Optional.
+                          items:
+                            format: string
+                            type: string
+                          type: array
+                        values:
+                          description: Optional.
+                          items:
+                            format: string
+                            type: string
+                          type: array
+                      type: object
+                    type: array
+                type: object
+              type: array
+            selector:
+              description: Optional.
+              properties:
+                matchLabels:
+                  additionalProperties:
+                    format: string
+                    type: string
+                  type: object
+              type: object
+          type: object
+        status:
+          type: object
+          x-kubernetes-preserve-unknown-fields: true
+      type: object
+  version: v1beta1
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    categories:
+    - istio-io
+    - security-istio-io
+    kind: AuthorizationPolicy
+    listKind: AuthorizationPolicyList
+    plural: authorizationpolicies
+    singular: authorizationpolicy
+  conditions:
+  - lastTransitionTime: "2021-02-18T22:33:43Z"
+    message: no conflicts found
+    reason: NoConflicts
+    status: "True"
+    type: NamesAccepted
+  - lastTransitionTime: "2021-02-18T22:33:43Z"
+    message: the initial names have been accepted
+    reason: InitialNamesAccepted
+    status: "True"
+    type: Established
+  storedVersions:
+  - v1beta1

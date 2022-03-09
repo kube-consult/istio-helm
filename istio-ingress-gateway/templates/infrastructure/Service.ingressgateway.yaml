@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: created-by={{ .Values.settings.createdby }},Name={{ .Values.settings.Name }},cost-centre={{ .Values.settings.costcentre }},security-classification={{ .Values.settings.securityclassification }},environment={{ .Values.settings.environment }},business-owner={{ .Values.settings.businessowner }},operational-owner={{ .Values.settings.operationalowner }},operational-hours={{ .Values.settings.operationalhours }},backup={{ .Values.settings.backup }}
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-access-log-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-access-log-emit-interval: "60"
+    service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-name: {{ required ".Values.settings.accessLogS3Bucket entry required!" .Values.settings.accessLogS3Bucket | quote }}
+    service.beta.kubernetes.io/aws-load-balancer-connection-draining-enabled: "true"  
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app: istio-ingressgateway-{{ .Values.settings.namespace }}
+    istio: ingressgateway-{{ .Values.settings.namespace }}
+    istio.io/rev: default
+    release: istio
+  name: ingressgateway-{{ .Values.settings.namespace }}
+  namespace: "{{ .Values.settings.namespace }}"
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: status-port
+    port: 15021
+    protocol: TCP
+    targetPort: 15021
+  # - name: http2
+  #   port: 80
+  #   protocol: TCP
+  #   targetPort: 8080
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  # - name: tcp-istiod
+  #   port: 15012
+  #   protocol: TCP
+  #   targetPort: 15012
+  # - name: tls
+  #   port: 15443
+  #   protocol: TCP
+  #   targetPort: 15443
+  selector:
+    app: istio-ingressgateway-{{ .Values.settings.namespace }}
+    istio: ingressgateway-{{ .Values.settings.namespace }}
+  sessionAffinity: None
+  type: LoadBalancer
+status:

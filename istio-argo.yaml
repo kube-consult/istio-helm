@@ -1,0 +1,173 @@
+---
+{{ $git := .Values.git -}}
+---
+{{ $cluster := .Values }}
+---
+{{ range $env := $cluster.environments -}}
+---
+{{ range $ns := $env.namespaces -}}
+---
+{{- if $ns.istioIngressGateway }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: "{{ $cluster.name }}-{{ $cluster.tier }}-{{ $env.name }}-istioig-{{ $ns.name }}"
+  # You'll usually want to add your resources to the argocd namespace.
+  namespace: argocd
+  # Add a this finalizer ONLY if you want these to cascade delete.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # The project the application belongs to.
+  project: "{{ $cluster.name }}-{{ $cluster.tier }}-users"
+
+  # Source of the application manifests
+  source:
+    repoURL: "{{ $cluster.helmRepo }}"
+    targetRevision: "{{ $ns.istioIngressGateway.targetRevision }}"
+    chart: "istio-ingress-gateway"
+    path: ""
+    helm:
+      values: |
+        settings:
+          {{- if not $env.useNamespaceNameOnly }}
+          namespace: {{ $env.name }}-{{ $ns.name }}
+          {{- else }}
+          namespace: "{{ $ns.name }}"
+          {{- end }}
+          {{- toYaml $ns.istioIngressGateway | nindent 10 }}
+
+  # Destination cluster and namespace to deploy the application
+  destination:
+    server: "{{ $cluster.server }}"
+    {{- if not $env.useNamespaceNameOnly }}
+    namespace: {{ $env.name }}-{{ $ns.name }}
+    {{- else }}
+    namespace: "{{ $ns.name }}"
+    {{- end }}
+
+  # Sync policy
+  syncPolicy:
+    automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
+      prune: false # Specifies if resources should be pruned during auto-syncing ( false by default ).
+    syncOptions:     # Sync options which modifies sync behavior
+      - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=true')
+      - CreateNamespace=false # Namespace Auto-Creation ensures that namespace specified as the application destination exists in the destination cluster.
+    # The retry feature is available since v1.7
+    retry:
+     limit: 0 # number of failed sync attempt retries; unlimited number of attempts if less than 0
+     backoff:
+       duration: 5s # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
+       factor: 2 # a factor to multiply the base duration after each failed retry
+       maxDuration: 3m # the maximum amount of time allowed for the backoff strategy
+  # ignores
+  ignoreDifferences:
+  - group: autoscaling 
+    kind: HorizontalPodAutoscaler
+    jsonPointers:
+    - /status/currentReplicas
+    - /status/desiredReplicas
+    - /metadata/generation
+    - /spec/minReplicas
+  - group: apps 
+    kind: Deployment
+    jsonPointers:
+    - /metadata/generation
+    - /spec/replicas
+    - /metadata/annotations
+  - group: policy
+    kind: PodDisruptionBudget
+    jsonPointers:
+    - /metadata/generation
+    - /status/currentHealthy
+    - /status/desiredHealthy
+    - /status/expectedPods
+    - /status/disruptionsAllowed
+---
+{{ end }}
+---
+{{ if $ns.istioEgressGateway }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: "{{ $cluster.name }}-{{ $cluster.tier }}-{{ $env.name }}-istioeg-{{ $ns.name }}"
+  # You'll usually want to add your resources to the argocd namespace.
+  namespace: argocd
+  # Add a this finalizer ONLY if you want these to cascade delete.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # The project the application belongs to.
+  project: "{{ $cluster.name }}-{{ $cluster.tier }}-users"
+
+  # Source of the application manifests
+  source:
+    repoURL: "{{ $cluster.helmRepo }}"
+    targetRevision: "{{ $ns.istioEgressGateway.targetRevision }}"
+    chart: "istio-egress-gateway"
+    path: ""
+    helm:
+      values: |
+        settings:
+          {{- if not $env.useNamespaceNameOnly }}
+          namespace: {{ $env.name }}-{{ $ns.name }}
+          {{- else }}
+          namespace: "{{ $ns.name }}"
+          {{- end }}
+          {{- toYaml $ns.istioEgressGateway | nindent 10 }}
+
+  # Destination cluster and namespace to deploy the application
+  destination:
+    server: "{{ $cluster.server }}"
+    {{- if not $env.useNamespaceNameOnly }}
+    namespace: {{ $env.name }}-{{ $ns.name }}
+    {{- else }}
+    namespace: "{{ $ns.name }}"
+    {{- end }}
+
+  # Sync policy
+  syncPolicy:
+    automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
+      prune: false # Specifies if resources should be pruned during auto-syncing ( false by default ).
+    syncOptions:     # Sync options which modifies sync behavior
+      - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=true')
+      - CreateNamespace=false # Namespace Auto-Creation ensures that namespace specified as the application destination exists in the destination cluster.
+    # The retry feature is available since v1.7
+    retry:
+     limit: 0 # number of failed sync attempt retries; unlimited number of attempts if less than 0
+     backoff:
+       duration: 5s # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
+       factor: 2 # a factor to multiply the base duration after each failed retry
+       maxDuration: 3m # the maximum amount of time allowed for the backoff strategy
+  # ignores
+  ignoreDifferences:
+  - group: autoscaling 
+    kind: HorizontalPodAutoscaler
+    jsonPointers:
+    - /status/currentReplicas
+    - /status/desiredReplicas
+    - /metadata/generation
+    - /spec/minReplicas
+  - group: apps 
+    kind: Deployment
+    jsonPointers:
+    - /metadata/generation
+    - /spec/replicas
+    - /metadata/annotations
+  - group: policy
+    kind: PodDisruptionBudget
+    jsonPointers:
+    - /metadata/generation
+    - /status/currentHealthy
+    - /status/desiredHealthy
+    - /status/expectedPods
+    - /status/disruptionsAllowed
+{{ end }}
+---
+{{ end }}
+---
+{{ end }}
+---
+

@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+  labels:
+    istio.io/rev: default
+    release: istio
+  name: ingressgateway-{{ .Values.settings.namespace }}-sds
+  namespace: "{{ .Values.settings.namespace }}"
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - watch
+  - list

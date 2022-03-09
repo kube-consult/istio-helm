@@ -1,0 +1,177 @@
+apiVersion: v1
+data:
+    {{- (.Files.Glob "files/config").AsConfig | nindent 2}}
+  values: |-
+    {
+      "global": {
+        "arch": {
+          "amd64": 2,
+          "ppc64le": 2,
+          "s390x": 2
+        },
+        "caAddress": "",
+        "configValidation": true,
+        "defaultNodeSelector": {},
+        "defaultPodDisruptionBudget": {
+          "enabled": true
+        },
+        "defaultResources": {
+          "requests": {
+            "cpu": "10m"
+          }
+        },
+        "enabled": true,
+        "externalIstiod": false,
+        "hub": "docker.io/istio",
+        "imagePullPolicy": "IfNotPresent",
+        "imagePullSecrets": [regcred,registry-creds],
+        "istioNamespace": "istio-system",
+        "istiod": {
+          "enableAnalysis": false
+        },
+        "jwtPolicy": "third-party-jwt",
+        "logAsJson": false,
+        "logging": {
+          "level": "default:info"
+        },
+        "meshID": "",
+        "meshNetworks": {},
+        "mountMtlsCerts": false,
+        "multiCluster": {
+          "clusterName": "",
+          "enabled": false
+        },
+        "namespace": "istio-system",
+        "network": "",
+        "omitSidecarInjectorConfigMap": false,
+        "oneNamespace": false,
+        "operatorManageWebhooks": false,
+        "pilotCertProvider": "istiod",
+        "priorityClassName": "",
+        "proxy": {
+          "autoInject": "enabled",
+          "clusterDomain": "cluster.local",
+          "componentLogLevel": "misc:error",
+          "enableCoreDump": false,
+          "excludeIPRanges": "",
+          "excludeInboundPorts": "",
+          "excludeOutboundPorts": "",
+          "holdApplicationUntilProxyStarts": false,
+          "image": "docker.repo.bendigobank.com.au/istio/proxyv2:1.9.0",
+          "includeIPRanges": "*",
+          "logLevel": "warning",
+          "privileged": {{ .Values.settings.istio_privileged }},
+          "readinessFailureThreshold": 30,
+          "readinessInitialDelaySeconds": 1,
+          "readinessPeriodSeconds": 2,
+          "resources": {
+            "limits": {
+              "cpu": "2000m",
+              "memory": "1024Mi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "memory": "128Mi"
+            }
+          },
+          "statusPort": 15020,
+          "tracer": "zipkin"
+        },
+        "proxy_init": {
+          "image": "docker.repo.bendigobank.com.au/istio/proxyv2:1.9.0",
+          "resources": {
+            "limits": {
+              "cpu": "2000m",
+              "memory": "1024Mi"
+            },
+            "requests": {
+              "cpu": "10m",
+              "memory": "10Mi"
+            }
+          }
+        },
+        "remotePilotAddress": "",
+        "sds": {
+          "token": {
+            "aud": "istio-ca"
+          }
+        },
+        "sts": {
+          "servicePort": 0
+        },
+        "tag": "1.9.0",
+        "tracer": {
+          "datadog": {
+            "address": "$(HOST_IP):8126"
+          },
+          "lightstep": {
+            "accessToken": "",
+            "address": ""
+          },
+          "stackdriver": {
+            "debug": false,
+            "maxNumberOfAnnotations": 200,
+            "maxNumberOfAttributes": 200,
+            "maxNumberOfMessageEvents": 200
+          },
+          "zipkin": {
+            "address": ""
+          }
+        },
+        "trustDomain": "",
+        "useMCP": false
+      },
+      "istio_cni": {
+        "enabled": false
+      },
+      "revision": "",
+      "sidecarInjectorWebhook": {
+        "alwaysInjectSelector": [],
+        "defaultTemplates": [],
+        "enableNamespacesByDefault": false,
+        "injectedAnnotations": {},
+        "neverInjectSelector": [],
+        "objectSelector": {
+          "autoInject": true,
+          "enabled": true
+        },
+        "rewriteAppHTTPProbe": true,
+        "templates": {},
+        "useLegacySelectors": true
+      }
+    }
+kind: ConfigMap
+metadata:
+  annotations:
+  labels:
+    install.operator.istio.io/owning-resource: unknown
+    install.operator.istio.io/owning-resource-namespace: istio-system
+    istio.io/rev: default
+    operator.istio.io/component: Pilot
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.9.0
+    release: istio
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        f:config: {}
+        f:values: {}
+      f:metadata:
+        f:annotations:
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+        f:labels:
+          f:install.operator.istio.io/owning-resource: {}
+          f:install.operator.istio.io/owning-resource-namespace: {}
+          f:istio.io/rev: {}
+          f:operator.istio.io/component: {}
+          f:operator.istio.io/managed: {}
+          f:operator.istio.io/version: {}
+          f:release: {}
+    manager: istio-operator
+    operation: Apply
+    time: "2021-02-18T02:57:01Z"
+  name: istio-sidecar-injector
+  namespace: istio-system
+  selfLink: /api/v1/namespaces/istio-system/configmaps/istio-sidecar-injector

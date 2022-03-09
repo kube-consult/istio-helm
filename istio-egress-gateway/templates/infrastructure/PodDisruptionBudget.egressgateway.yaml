@@ -1,0 +1,22 @@
+{{- if .Values.settings.egress_gateway_infrastructure_enabled }}
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+  generation: 1
+  labels:
+    app: istio-egressgateway-{{ .Values.settings.namespace }}
+    istio: egressgateway-{{ .Values.settings.namespace }}
+    istio.io/rev: default
+    release: istio
+    gateway-name: egressgateway-{{ .Values.settings.namespace }}
+  name: egressgateway-{{ .Values.settings.namespace }}
+  namespace: {{ .Values.settings.namespace }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: istio-egressgateway-{{ .Values.settings.namespace }}
+      istio: egressgateway-{{ .Values.settings.namespace }}
+status:
+{{- end }}

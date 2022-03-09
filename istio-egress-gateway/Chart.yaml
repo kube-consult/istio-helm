@@ -1,0 +1,3 @@
+name: istio-egress-gateway
+# <Istio Symantic version>-ben-<bendigo Symantic version>
+version: 1.19.0-ben-1.0.3

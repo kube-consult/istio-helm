@@ -1,0 +1,16 @@
+{{- if .Values.settings.egress_passthrough_gateway_enabled }}
+  {{- range $k, $v := .Values.settings.egress_passthrough_gateway_values }}
+    {{- range $kk, $vv := $v }}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ $kk }}
+spec:
+  host: egressgateway-{{ $.Values.settings.namespace }}
+  subsets:
+  - name: {{ $kk }}
+---  
+    {{ end }}
+  {{ end }}
+{{- end }}
+

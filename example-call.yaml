@@ -1,0 +1,49 @@
+   namespaces:
+      - name: dev
+        labels: |
+          istio-injection: enabled
+        istioIngressGateway:
+          # INFRASTUCTURE
+          replicas: 1
+          targetRevision: "1.19.0-ben-1.0.1"
+          # TAGS - ELB
+          Name: "mps-dev-nonprod-istio-elb"
+          securityclassification: "pci"
+          operationalhours: "24x7"
+          backup: "false"
+          accessLogS3Bucket: "nonprod-istio-lb-access-logs"
+          # INGRES GATEWAY CONFIGURATION
+          ingress_mutual_gateways_enabled: true
+          ingress_mutual_gateways_values:
+            - mps: istio.com|443|istio-ingress-gateway-server-cert
+          # ingress_simple_gateways_enabled: true
+          # ingress_simple_gateways_values:
+          #   - mps: istio.com|443|istio-ingress-gateway-server-cert
+        istioEgressGateway:
+          # INFRASTUCTURE
+          replicas: 1
+          targetRevision: "1.19.0-ben-1.0.3"
+          egress_gateway_infrastructure_enabled: true
+          # EGRESS GATEWAY CONFIGURATION
+          # egress_aws_enabled: false
+          egress_mutual_gateways_enabled: true
+          egress_mutual_gateways_values:
+            - kong-egress: kong-gw.com|443|istio-egress-gateway-client-cert
+          # egress_simple_gateways_enabled: true
+          # egress_simple_gateways_values:
+          #   - apic-egress: apigateway.com|443|istio-apic-egress-credential
+          egress_database_enabled: true
+          # egress_database_ca_secret_enabled: false
+          # egress_database_ca_secret_name:
+          egress_database_name: mssql
+          egress_database_ip_range: # restricted subnets
+            - 10.x.x.x/x
+          egress_database_hostname: nonprod.rds.amazonaws.com
+          egress_database_ports:
+            - xxxx
+          # egress_passthrough_enabled: false
+          egress_passthrough_gateway_enabled: true
+          egress_passthrough_gateway_values:
+            - apic-egress: apigateway.com|443
+            - appdynamics: saas.appdynamics.com|443
+          # egress_wildcard_enabled: false

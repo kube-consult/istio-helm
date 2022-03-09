@@ -1,0 +1,20 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+  labels:
+    app: istio-ingressgateway-{{ .Values.settings.namespace }}
+    istio: ingressgateway-{{ .Values.settings.namespace }}
+    istio.io/rev: default
+    release: istio
+  name: ingressgateway-{{ .Values.settings.namespace }}
+  namespace: "{{ .Values.settings.namespace }}"
+spec:
+  maxReplicas: 5
+  minReplicas: {{ .Values.settings.replicas }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ingressgateway-{{ .Values.settings.namespace }}
+  targetCPUUtilizationPercentage: 80
+status:

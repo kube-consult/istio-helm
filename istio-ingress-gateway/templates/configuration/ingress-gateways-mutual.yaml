@@ -1,0 +1,32 @@
+{{- if .Values.settings.ingress_mutual_gateways_enabled }}
+  {{- range $k, $v := .Values.settings.ingress_mutual_gateways_values }}
+    {{- range $kk, $vv := $v }}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ $kk }}
+spec:
+  selector:
+    istio: ingressgateway-{{ $.Values.settings.namespace }}
+  servers:
+  - port:
+      number: {{ (split "|" $vv)._1 }}
+      name: https
+      protocol: HTTPS
+    hosts:
+    - {{ (split "|" $vv)._0 }}
+    tls:
+      mode: MUTUAL
+      credentialName: {{ (split "|" $vv)._2 }}
+      minProtocolVersion: TLSV1_2
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+---  
+    {{ end }}
+  {{ end }}
+{{- end }}

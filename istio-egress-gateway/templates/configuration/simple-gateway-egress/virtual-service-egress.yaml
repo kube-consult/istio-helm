@@ -1,0 +1,40 @@
+{{- if .Values.settings.egress_simple_gateways_enabled }}
+  {{- range $k, $v := .Values.settings.egress_simple_gateways_values }}
+    {{- range $kk, $vv := $v }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $kk }}
+spec:
+  hosts:
+  - {{ (split "|" $vv)._0 }}
+  gateways:
+  - mesh
+  - {{ $kk }}
+  hosts:
+  - {{ (split "|" $vv)._0 }}
+  http:
+  - match:
+    - gateways:
+      - mesh
+      port: 80
+    route:
+    - destination:
+        host: egressgateway-{{ $.Values.settings.namespace }}
+        port:
+          number: 443
+        subset: {{ $kk }}
+  - match:
+    - gateways:
+      - {{ $kk }}
+      port: 443
+    route:
+    - destination:
+        host: {{ (split "|" $vv)._0 }}
+        port:
+          number: {{ (split "|" $vv)._1 }}
+      weight: 100
+---  
+    {{ end }}
+  {{ end }}
+{{- end }}

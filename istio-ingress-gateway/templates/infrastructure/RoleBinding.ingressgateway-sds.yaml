@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+  labels:
+    istio.io/rev: default
+    release: istio
+  name: ingressgateway-{{ .Values.settings.namespace }}-sds
+  namespace: "{{ .Values.settings.namespace }}"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ingressgateway-{{ .Values.settings.namespace }}-sds
+subjects:
+- kind: ServiceAccount
+  name: ingressgateway-{{ .Values.settings.namespace }}-service-account

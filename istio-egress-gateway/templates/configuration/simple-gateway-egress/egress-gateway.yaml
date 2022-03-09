@@ -1,0 +1,23 @@
+{{- if .Values.settings.egress_simple_gateways_enabled }}
+  {{- range $k, $v := .Values.settings.egress_simple_gateways_values }}
+    {{- range $kk, $vv := $v }}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ $kk }}
+spec:
+  selector:
+    istio: egressgateway-{{ $.Values.settings.namespace }}
+  servers:
+  - hosts:
+    - {{ (split "|" $vv)._0 }}
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      mode: ISTIO_MUTUAL
+---  
+    {{ end }}
+  {{ end }}
+{{- end }}
